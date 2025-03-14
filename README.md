@@ -39,17 +39,12 @@ GPT_MODEL=gpt-4o-mini  # or another OpenAI model of your choice
 
 ## Running the Application
 
-1. Start the backend server:
+1. Start the application:
 ```bash
-python3 -m uvicorn backend.main:app --reload
+streamlit run main.py
 ```
 
-2. Start the frontend application (in a new terminal):
-```bash
-streamlit run frontend/app.py
-```
-
-3. Open your browser and navigate to the URL shown in the Streamlit output (typically http://localhost:8501)
+2. Open your browser and navigate to the URL shown in the Streamlit output (typically http://localhost:8501)
 
 ## Usage
 
