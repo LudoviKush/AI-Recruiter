@@ -24,7 +24,53 @@ def display_analysis(analysis, text):
         st.session_state.current_question_index += 1
         st.rerun()
     else:
-        st.success("🎉 Interview completed! Thank you for your participation.")
+        # Calculate final scores when all questions are answered
+        display_final_assessment()
+
+# Function to calculate average scores and display final assessment
+def display_final_assessment():
+    if not st.session_state.responses:
+        return
+    
+    # Calculate average scores using Python (not relying on LLM)
+    total_technical = 0
+    total_communication = 0
+    
+    for response in st.session_state.responses:
+        total_technical += float(response['analysis']['technical_score'])
+        total_communication += float(response['analysis']['communication_score'])
+    
+    avg_technical = total_technical / len(st.session_state.responses)
+    avg_communication = total_communication / len(st.session_state.responses)
+    avg_overall = (avg_technical + avg_communication) / 2
+    
+    # Determine if candidate passed (threshold is 7/10)
+    passed = avg_overall >= 7.0
+    
+    # Display final assessment with pass/fail status
+    st.markdown("---")
+    st.markdown("## 📊 Final Assessment")
+    
+    # Create columns for scores
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Technical Score", f"{avg_technical:.1f}/10")
+    with col2:
+        st.metric("Communication Score", f"{avg_communication:.1f}/10")
+    with col3:
+        st.metric("Overall Score", f"{avg_overall:.1f}/10")
+    
+    # Display pass/fail status with appropriate styling
+    if passed:
+        st.markdown(f"""<div style='background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0; text-align: center; font-size: 1.2rem;'>
+            <strong>PASSED</strong> - Congratulations! You've successfully passed the interview with an overall score of {avg_overall:.1f}/10.
+        </div>""", unsafe_allow_html=True)
+    else:
+        st.markdown(f"""<div style='background-color: #f8d7da; color: #721c24; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0; text-align: center; font-size: 1.2rem;'>
+            <strong>NOT PASSED</strong> - Thank you for your participation. Your overall score was {avg_overall:.1f}/10, which is below our threshold of 7.0/10.
+        </div>""", unsafe_allow_html=True)
+    
+    st.success("🎉 Interview completed! Thank you for your participation.")
 
 # Set up the page configuration
 st.set_page_config(
